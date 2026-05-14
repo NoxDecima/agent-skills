@@ -21,7 +21,7 @@ v1 addresses **A** (minimum surface) and **C** (full feature). **B is deferred**
 - No `merge-review` wrapper skill.
 - No hooks (SessionStart, UserPromptSubmit, etc.).
 - No `settings.json` fragments.
-- No per-skill baseline tests (writing-skills TDD discipline).
+- No durable regression-test harness for skills. (Note: the writing-skills TDD discipline — baseline pressure scenarios during *authoring* — is required for v1 per §5.4. The deferred item is a *persisted regression suite*, not the authoring discipline.)
 - No project-specific followup file locations.
 - No home-manager / nix integration.
 
@@ -67,7 +67,7 @@ Rationale: rather than nudge each high-leverage superpowers skill individually, 
 
 **B. Followup-tracking pointer:**
 
-> Capture deferrable items via the `followup-tracking` skill. The active list lives in TaskList (filter by `metadata.kind = "followup"`). On task completion, run the triage flow. Persisted items go to Linear (destination prompted unless specified in chat or in the active project's CLAUDE.md) and are mirrored to `~/claude-followups/YYYY-MM-DD.md`.
+> Capture deferrable items via the `followup-tracking` skill. The active list lives in TaskList (filter by `metadata.kind = "followup"`). On task completion, run the triage flow. Persisted items go to Linear (destination: project CLAUDE.md takes precedence without prompting; otherwise prior chat values are suggested as defaults in a confirmation prompt; otherwise the user is prompted with no defaults) and are mirrored to `~/claude-followups/YYYY-MM-DD.md`.
 
 **C. Reserved section** for future small preferences (commit style, stack defaults, etc.) added incrementally as friction arises.
 
@@ -90,7 +90,7 @@ When the model identifies a deferrable item — a non-blocking issue noticed whi
 - `subject`: concise statement of the item
 - `description`: origin (what task surfaced it; file/line if relevant; why it was deferred)
 - `metadata.kind`: `"followup"`
-- `metadata.severity` (optional): `"low" | "medium" | "high"` — organizational only, not a merge gate
+- `metadata.severity` (optional): `"low" | "medium" | "high"` — **absent by default**. The presence of a severity tag is itself a strong signal that the model judged this item worth ranking. If unsure, omit. Severity is organizational only, never a merge gate.
 
 Active followups live in TaskList alongside in-progress work and are filterable by metadata.
 
@@ -112,12 +112,14 @@ The skill iterates captured followups and presents each as:
 
 Two destinations; order matters because Linear can fail.
 
-1. **Linear.** Destination resolution:
-   - If a Linear team+project was stated in the active chat, reuse it
-   - Else if active project's `CLAUDE.md` declares one (format: `Linear: team=X project=Y`), reuse it
-   - Else prompt the user for team + project (offer "save for this session?")
-   - Create the issue via the Linear MCP (`mcp__linear-server__save_issue`)
+1. **Linear.** Destination resolution, in order:
+   - If a Linear team+project has been used earlier in this chat, **suggest those values as defaults** in a confirmation prompt ("Persist to team=X project=Y? [Y]es / different / skip") — the suggestion is a default, not a silent reuse
+   - Else if active project's `CLAUDE.md` declares one (format: `Linear: team=X project=Y`), use it without prompting (project CLAUDE.md is an explicit stable preference)
+   - Else prompt the user for team + project with no defaults
+   - Create the issue via the `mcp__linear-server__save_issue` tool
    - Capture the returned Linear issue ID
+
+   No "save destination for the session" prompt. The session-memory of last-used destination is implicit and shown as a default each time a destination is needed.
 
 2. **Local mirror.** Append to `~/claude-followups/YYYY-MM-DD.md` (per-day, global, easy to grep). One record per item:
    ```
@@ -143,6 +145,34 @@ skills/followup-tracking/
 
 No supporting files in v1. If the skill grows reference material (e.g., Linear payload templates), split into separate files per writing-skills guidance.
 
+### 5.4 Skill quality bar (load-bearing requirements)
+
+The skill must be written to maximize invocation reliability and resist rationalization. Implementation must consult **both** of these references before drafting SKILL.md:
+
+- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/SKILL.md` (superpowers' authoring guide — TDD-for-skills, rationalization closure)
+- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/anthropic-best-practices.md` (Anthropic's official authoring guide)
+
+Concrete requirements derived from those sources (this is the acceptance bar — not negotiable):
+
+**Description field:**
+- Directive form. Start with "Use when..." or "ALWAYS invoke when...". Passive "Use for tracking followups" is rejected.
+- Describes **when to invoke** — concrete triggers and symptoms. Does **not** summarize the capture/triage/persist workflow. (Summarizing workflow in the description creates a trap where the model follows the description and skips the skill body.)
+- Third person.
+- Includes keywords the model would search for: "TODO", "follow-up", "deferrable", "later", "not blocking", "out of scope" — symptoms of items that should be captured.
+- Under 500 characters.
+
+**Body:**
+- Target under 200 lines, hard ceiling 500.
+- Begins with a one-line overview and the load-bearing principle (capture automatic, persistence explicit).
+- Phase structure (Capture / Triage / Persist) with clear boundaries — what triggers each phase, what input it accepts, what output it produces.
+- **Rationalization table.** Lists specific excuses the model might use to skip capture or auto-persist without user confirmation, each with its rebuttal. Examples: "this is too small to track", "I'll just remember it", "the user obviously wants it persisted".
+- **Red-flags list.** Symptoms that mean the skill is being violated mid-flow.
+- MCP tool referenced by fully qualified name: `mcp__linear-server__save_issue`.
+- No `@file` references in the body (those force-load context). Use `REQUIRED BACKGROUND:` or `REQUIRED SUB-SKILL:` markers for cross-skill references instead.
+
+**Authoring discipline:**
+- The skill must be built test-first per `writing-skills`: write a baseline pressure scenario, run it with a subagent **without** the skill, document what the agent actually does when a deferrable item is mentioned. Only then write the minimal skill that fixes the observed failures. Re-test until rationalizations are closed. This applies to v1 — not deferred.
+
 ## 6. Setup steps (high level — full plan comes from writing-plans skill)
 
 1. Create `~/claude-followups/` directory.
@@ -161,13 +191,20 @@ Each item is added only if real friction demands it.
 1. **Severity rubric + merge-review wrapper** — revisit pain point B if `superpowers:requesting-code-review` continues to escalate minor findings.
 2. **SessionStart hook reinforcing followup capture** — only if drift is observed in long sessions.
 3. **Project-specific followup file location** — if the global per-day file proves wrong.
-4. **Baseline-failure tests per writing-skills TDD** — once there are ≥2 personal skills worth protecting against regression.
+4. **Persisted regression-test harness** for skills (separate from the authoring-time baseline scenarios, which v1 already does per §5.4) — once there are ≥2 personal skills worth protecting against drift.
 5. **Home-manager / nix integration** — once the repo layout has stabilized and is unlikely to churn.
 6. **Per-skill directive nudges in CLAUDE.md** — if the single `using-superpowers` nudge proves insufficient for specific skills.
 
 ## 8. Open decisions deferred to implementation
 
-- Exact wording of the SKILL.md description (will be tuned during implementation; directive form is the requirement).
-- Whether `metadata.severity` defaults to `medium` or is left absent.
-- Whether the "save destination for the session" prompt is in v1 or v1.1 — leaning v1 if it's a few lines, defer otherwise.
-- Whether the local mirror file's header includes a per-file YAML frontmatter (date, project) — leaning no for v1.
+Most §8 items are now resolved and folded into §5.
+
+Remaining open:
+
+- **YAML frontmatter on local mirror files.** Whether `~/claude-followups/YYYY-MM-DD.md` should have a per-file header block (date, projects touched, summary) or just be a flat append-only list. Leaning no (simpler, easier to grep, can be added later).
+
+Resolved (recorded for traceability):
+
+- *SKILL.md description wording* → resolved in §5.4 (directive, when-only, no workflow summary, concrete trigger keywords).
+- *`metadata.severity` default* → resolved in §5.1 (absent by default; presence is itself the signal).
+- *"Save destination for the session" prompt* → resolved in §5.1 (no such prompt; session-memory of last-used team+project is shown as a default in each subsequent destination confirmation).
