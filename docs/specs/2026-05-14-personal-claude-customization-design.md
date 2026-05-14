@@ -73,6 +73,10 @@ Rationale: rather than nudge each high-leverage superpowers skill individually, 
 
 ## 5. Skill: `followup-tracking`
 
+**Core principle (load-bearing):**
+
+> Capture is automatic. **Persistence is explicit.** No followup is written to Linear or any external tracker without per-item user confirmation during triage. The local mirror file is also gated on the same user confirmation — nothing is persisted anywhere until the user has reviewed it.
+
 **Description (directive form, written for invocation reliability):**
 
 > ALWAYS invoke when a deferrable issue, follow-up task, or "TODO later" item surfaces during work. Use to capture, triage, and persist these items so they are not lost between sessions.
