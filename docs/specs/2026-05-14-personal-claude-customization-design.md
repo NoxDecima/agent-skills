@@ -113,8 +113,8 @@ The skill iterates captured followups and presents each as:
 Two destinations; order matters because Linear can fail.
 
 1. **Linear.** Destination resolution, in order:
-   - If a Linear team+project has been used earlier in this chat, **suggest those values as defaults** in a confirmation prompt ("Persist to team=X project=Y? [Y]es / different / skip") — the suggestion is a default, not a silent reuse
-   - Else if active project's `CLAUDE.md` declares one (format: `Linear: team=X project=Y`), use it without prompting (project CLAUDE.md is an explicit stable preference)
+   - If the active project's `CLAUDE.md` declares `Linear: team=X project=Y`, use those values without prompting (project `CLAUDE.md` is an explicit stable preference and beats session memory)
+   - Else if a Linear team+project has been used earlier in this chat, **suggest those values as defaults** in a confirmation prompt ("Persist to team=X project=Y? [Y]es / different / skip") — the suggestion is a default, not a silent reuse
    - Else prompt the user for team + project with no defaults
    - Create the issue via the `mcp__linear-server__save_issue` tool
    - Capture the returned Linear issue ID
@@ -123,9 +123,10 @@ Two destinations; order matters because Linear can fail.
 
 2. **Local mirror.** Append to `~/claude-followups/YYYY-MM-DD.md` (per-day, global, easy to grep). One record per item:
    ```
-   - [HH:MM][severity] Subject
+   - [HH:MM][<severity>] <subject>          # when severity is present
+   - [HH:MM] <subject>                       # when severity is absent (omit the second bracket entirely)
      origin: <description>
-     linear: <issue id or "FAILED">
+     linear: <issue-id-or-FAILED>
    ```
 
 The local mirror is appended **regardless of Linear success** — it is the durable backup.
@@ -149,8 +150,8 @@ No supporting files in v1. If the skill grows reference material (e.g., Linear p
 
 The skill must be written to maximize invocation reliability and resist rationalization. Implementation must consult **both** of these references before drafting SKILL.md:
 
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/SKILL.md` (superpowers' authoring guide — TDD-for-skills, rationalization closure)
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/anthropic-best-practices.md` (Anthropic's official authoring guide)
+- `superpowers:writing-skills` SKILL.md (superpowers' authoring guide — TDD-for-skills, rationalization closure)
+- The `anthropic-best-practices.md` file co-located with the `superpowers:writing-skills` skill (Anthropic's official authoring guide)
 
 Concrete requirements derived from those sources (this is the acceptance bar — not negotiable):
 

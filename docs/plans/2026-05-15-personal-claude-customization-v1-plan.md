@@ -10,8 +10,8 @@
 
 **Reference docs (the engineer must read both before Task 5):**
 
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/SKILL.md`
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/anthropic-best-practices.md`
+- `superpowers:writing-skills` SKILL.md
+- The `anthropic-best-practices.md` file co-located with the `superpowers:writing-skills` skill
 
 ---
 
@@ -263,8 +263,8 @@ cd /home/nox/Documents/Projects/Nox/claude-config && \
 - Create: `skills/followup-tracking/SKILL.md`
 
 **Prerequisite reading (REQUIRED — read fully before drafting):**
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/SKILL.md`
-- `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/writing-skills/anthropic-best-practices.md`
+- `superpowers:writing-skills` SKILL.md
+- The `anthropic-best-practices.md` file co-located with the `superpowers:writing-skills` skill
 
 - [ ] **Step 1: Write the SKILL.md**
 
