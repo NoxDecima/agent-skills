@@ -34,6 +34,12 @@ You do **not** need to articulate why an item is deferrable before capturing it.
 
 ### 1. Capture (automatic, during work)
 
+**Tool availability:** `TaskCreate`, `TaskList`, `TaskUpdate`, `TaskGet` are deferred tools in this environment — they may need to be loaded into the session before first use. If `TaskCreate` is not in your current tool list, load all four with:
+
+`ToolSearch({ query: "select:TaskCreate,TaskList,TaskUpdate,TaskGet", max_results: 4 })`
+
+Once loaded, the tools remain available for the rest of the session.
+
 The instant a deferrable item is noticed, call `TaskCreate`:
 
 ```
@@ -84,6 +90,14 @@ Destination resolution, in this exact order:
 1. If the active project's `CLAUDE.md` declares `Linear: team=X project=Y`, use those values without prompting. (Project `CLAUDE.md` is an explicit stable preference and beats session memory.)
 2. Else, if a Linear team+project was used earlier in **this chat**, suggest those as defaults in a confirmation prompt: `Persist to team=X project=Y? [Y]es / different / skip`. The suggestion is a default, never a silent reuse.
 3. Else, prompt the user for team and project with no defaults.
+
+**Linear call shape (field mapping):**
+
+Map the captured `TaskCreate` fields to `save_issue` parameters:
+
+`mcp__linear-server__save_issue({ title: <TaskCreate subject>, description: <TaskCreate description>, team: <team ID resolved above>, project: <project ID resolved above> })`
+
+`title` and `team` are required by Linear; the call will fail if either is missing (a hard fail distinct from the "no defaults" branch of resolution above). `project` is optional but recommended.
 
 Create the issue. Capture the returned Linear issue ID for the local mirror line.
 
