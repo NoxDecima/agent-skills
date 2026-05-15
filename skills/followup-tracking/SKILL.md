@@ -34,11 +34,11 @@ You do **not** need to articulate why an item is deferrable before capturing it.
 
 ### 1. Capture (automatic, during work)
 
-**Tool availability:** `TaskCreate`, `TaskList`, `TaskUpdate`, `TaskGet` are deferred tools in this environment — they may need to be loaded into the session before first use. If `TaskCreate` is not in your current tool list, load all four with:
+**Tool availability (mandatory step before first capture):** `TaskCreate`, `TaskList`, `TaskUpdate`, `TaskGet` are deferred tools — they will not appear in your default tool list. Before your first capture, you **must** load them by calling:
 
 `ToolSearch({ query: "select:TaskCreate,TaskList,TaskUpdate,TaskGet", max_results: 4 })`
 
-Once loaded, the tools remain available for the rest of the session.
+Once loaded, they remain callable for the rest of the session. **"The tools aren't available" is not an acceptable reason to skip capture or fall back to an inline list, prose mention, or any other substitute. ToolSearch is always available; loading is one call away.** Falling back without first calling ToolSearch is a violation.
 
 The instant a deferrable item is noticed, call `TaskCreate`:
 
@@ -126,6 +126,7 @@ Each row names a pattern observed in the baseline (no-skill) run on the canonica
 | "I said 'X is untouched' in my summary — so I've already disclosed it." | Naming an item as untouched is **not** capture. Capture means `TaskCreate`. The summary line and the followup are independent obligations. (Failure mode 1: noticed-but-not-surfaced.) |
 | "The user said 'do not modify X' — surfacing it would be out of scope." | "Do not modify" governs **edits**, not **awareness**. Scope-compliance and capture are independent axes. Record the item; you are not editing it. (Failure mode 2: scope/gag-order conflation.) |
 | "I'll just mention it in my summary paragraph instead of a tool call." | Free-form prose has no schema and gets lost on compaction. Use `TaskCreate` with `metadata.kind = "followup"`. (Failure mode 3: no structured tracking.) |
+| "TaskCreate isn't in my tool list — I'll list the items inline in my summary instead." | ToolSearch IS in your tool list, and the skill mandates loading TaskCreate via ToolSearch before first capture. Inline lists, prose mentions, parenthetical asides, and "summary appendix" lists are all the same failure: non-`TaskCreate` substrates that bypass triage and persistence. Run ToolSearch, then capture. (Loophole observed in Task 6 Run 1.) |
 | "Missing tests / missing docstring are about the whole file, not my change — that's not a followup." | File-level and structural concerns count. Missing tests, missing module docstring, missing type annotations, missing error handling for the touched module are all capture-eligible. (Failure mode 4: orthogonal observations dropped.) |
 | "I'll just silently move on — the user can ask if they want to know." | Silence is the failure mode. Either the item is captured (and surfaces at triage), or the user is asked. Never the third option of dropping it. (Failure mode 5: no question to user.) |
 | "I never articulated 'out of scope', so I'm not skipping anything." | Drop-by-omission is still a drop. Noticing without capturing is the violation, regardless of whether you articulated a reason. (Failure mode 6: unrationalized silent drops.) |
@@ -143,6 +144,7 @@ Each row names a pattern observed in the baseline (no-skill) run on the canonica
 - About to invent severity to fill the field
 - Thinking "this is too small to be worth a `TaskCreate`"
 - Thinking "I'll just remember it"
+- Thinking "the TaskCreate tools aren't loaded so I'll list the items inline" — ToolSearch loads them; the inline-list fallback is a violation, not an adaptation
 
 If any of these fire, the skill is being violated. Stop, capture what should be captured, then continue.
 
