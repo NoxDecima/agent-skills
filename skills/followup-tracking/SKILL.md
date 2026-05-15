@@ -95,13 +95,46 @@ Destination resolution, in this exact order:
 2. Else, if a Linear team+project was used earlier in **this chat**, suggest those as defaults in a confirmation prompt: `Persist to team=X project=Y? [Y]es / different / skip`. The suggestion is a default, never a silent reuse.
 3. Else, prompt the user for team and project with no defaults.
 
-**Linear call shape (field mapping):**
+**Linear call shape:**
 
-Map the captured `TaskCreate` fields to `save_issue` parameters:
+`mcp__linear-server__save_issue({ title, description, team, project })`
 
-`mcp__linear-server__save_issue({ title: <TaskCreate subject>, description: <TaskCreate description>, team: <team ID resolved above>, project: <project ID resolved above> })`
+Field mapping:
 
-`title` and `team` are required by Linear; the call will fail if either is missing (a hard fail distinct from the "no defaults" branch of resolution above). `project` is optional but recommended.
+- `title` ← TaskCreate subject (the user can clean it up at triage Edit if it doesn't already read like a good issue title).
+- `team`, `project` ← resolved above. `title` and `team` are required by Linear; the call will hard-fail if either is missing (this is distinct from the "no defaults" branch of resolution above — that branch is about how to *find* the team, not about omitting it). `project` is optional but recommended.
+- `description` ← **rendered markdown body using the template below**, not the raw `TaskCreate.description` string. The raw capture string is for the in-session TaskList view; the Linear body is the artifact that other people (and future-you) will read, and it should be scannable.
+
+**Linear description template:**
+
+```markdown
+## Context
+
+Surfaced during: <surfacing task / branch / PR>.
+
+## Observation
+
+<what was noticed, 1–3 sentences expanded from the captured note>
+
+## Reference
+
+- `<file:line>` — <one-line context>
+
+## Why deferred
+
+<one-line reason; e.g. "out of scope for surfacing task">
+
+## Suggested next step
+
+<concrete one-line action sketch; omit the entire section if no sketch is available>
+```
+
+Rendering rules:
+
+- Use `##` headings exactly as shown.
+- Wrap file paths, symbol names, and command snippets in inline backticks.
+- **Omit any section entirely** when its content would be empty or "n/a" — never produce a heading with no content beneath it.
+- Reconstruct missing fields from surrounding capture context when possible; only fall back to a generic placeholder like "Out of scope for the surfacing task." if no better content is available.
 
 Create the issue. Capture the returned Linear issue ID for the local mirror line.
 
