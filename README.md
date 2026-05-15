@@ -4,7 +4,8 @@ Personal Claude Code customization layer on top of the `superpowers` plugin.
 
 ## Layout
 
-- `CLAUDE.md` — global memory file. Symlinked into `~/.claude/CLAUDE.md`.
+- `GLOBAL.md` — global memory (applies to every Claude Code session). Symlinked into `~/.claude/CLAUDE.md`.
+- `CLAUDE.md` — project memory (auto-loaded by the harness when working in this repo). Holds the project-scope Linear destination and any conventions specific to editing this repo.
 - `skills/<name>/SKILL.md` — personal skills. Each is symlinked into `~/.claude/skills/<name>/`.
 - `docs/specs/` — design specs.
 - `docs/plans/` — implementation plans.
@@ -28,7 +29,10 @@ if [ -e ~/.claude/CLAUDE.md ] && [ ! -L ~/.claude/CLAUDE.md ]; then
 fi
 
 # 3. Symlinks into ~/.claude/
-ln -s "$REPO/CLAUDE.md"                   ~/.claude/CLAUDE.md
+#    Note: only GLOBAL.md is symlinked. The repo's CLAUDE.md is the
+#    *project* memory file and is auto-loaded by the harness whenever
+#    you work inside this repo — no symlink needed for it.
+ln -s "$REPO/GLOBAL.md"                   ~/.claude/CLAUDE.md
 ln -s "$REPO/skills/followup-tracking"    ~/.claude/skills/followup-tracking
 
 # 4. Verify
@@ -36,7 +40,7 @@ readlink -f ~/.claude/CLAUDE.md
 readlink -f ~/.claude/skills/followup-tracking
 ```
 
-To activate additional personal skills landed in this repo, repeat step 3 with the new skill's directory. Smoke-test in a fresh Claude Code session — the global `CLAUDE.md` content should be in context and any installed personal skill should be listed under available skills.
+To activate additional personal skills landed in this repo, repeat step 3 with the new skill's directory. Smoke-test in a fresh Claude Code session — `GLOBAL.md`'s content should be in context, the project `CLAUDE.md` should also be in context when the cwd is this repo, and any installed personal skill should be listed under available skills.
 
 The full task-by-task install procedure (with backup logic, verification, and a fresh-session smoke test) is in `docs/plans/2026-05-15-personal-claude-customization-v1-plan.md`.
 
