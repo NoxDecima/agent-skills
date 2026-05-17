@@ -150,7 +150,8 @@ The plan (next step) will sequence these as discrete tasks.
 ## 12. Open questions deferred to plan
 
 - Exact wording of the SKILL.md `description` field (it must reliably trigger on "brainstorm + vault/notes/obsidian" intent without over-firing).
-- Whether Phase 3's tag fan-out should be unconditional or gated on a shared-tag heuristic.
+- Concrete threshold for §6 Phase 3's "non-trivial tag" gate (the design fixes the *shape* of the gate; the plan will choose the heuristic, e.g. "any tag deeper than one segment" vs. "any non-top-level tag shared by ≥2 of the top notes").
+- The mechanism for deriving the "recent" window in §6 Phase 4 (the search API does not expose modification time directly; the plan will pick between frontmatter dates via `read`, the indexer's `last_indexed`, or a path-based date convention).
 - Whether to set a hard cap on the number of `search`/`read` calls per session to prevent runaway exploration.
 
 These are implementation details, not design questions, and belong in the plan.
