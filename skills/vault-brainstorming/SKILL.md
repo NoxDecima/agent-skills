@@ -56,10 +56,12 @@ Then read the **full content** of the top 3–5 results so the model has the act
 
 ```
 mcp__obsidian-hybrid-search__read({
-  path: "<vault-relative path of a top hit>",
+  paths: ["<vault-relative path of a top hit>", "<another top hit>", "..."],
   related: true
 })
 ```
+
+(`paths` accepts a single string or an array. Batch the top 3–5 hits in one call.)
 
 "I'll just run one well-phrased search and call it discovery" is a violation — use `queries[]` with 3–4 reformulations in a single call. The fan-out is cheap, ranked, and reproducible.
 
