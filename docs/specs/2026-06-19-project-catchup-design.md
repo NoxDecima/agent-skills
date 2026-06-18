@@ -1,7 +1,7 @@
 # project-catchup — Design
 
 **Date:** 2026-06-19
-**Status:** Draft (awaiting user review)
+**Status:** Accepted — implemented 2026-06-19 (skill at `skills/project-catchup/SKILL.md`)
 **Scope:** A new personal skill that catches a returning developer up on what changed in a project since a past point, understands the impact, and surfaces what must be done locally before resuming development.
 
 ## 1. Motivation

@@ -47,4 +47,6 @@ Context: local main is 6 behind origin/main; fetch required.
 - **F9 (secondary) — base mishandling.** Picks a nonsensical base, or emits a `base..target` diff without confirming/inferring the base sensibly.
 - **F10 (secondary) — ungated mutation.** Runs migrate/install (or proposes to, as if it already had) without asking.
 
+> An **emergent** failure mode **F11 — direction confusion** (reporting the developer's own branch / uncommitted work as "what changed while away") was identified during the baseline run; it is defined in `project-catchup-baseline-observations.md`.
+
 Also record: did it run `git fetch`? `git diff` (not just `git log`)? Did it read CLAUDE.md/README? How many of the 5 action-required items and 2 collisions did it surface?

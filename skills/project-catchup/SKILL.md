@@ -100,7 +100,7 @@ Only on explicit request. **Expand:** drill into any area/file with the detail h
 
 ## Rationalizations — these are violations, not exceptions
 
-Ordered by what actually fired in the baseline (no-skill) run. F-codes reference `tests/project-catchup-baseline-observations.md`.
+Roughly ordered by baseline impact, with the dominant fired failures first; rows that did **not** fire on this baseline are labelled "preventive". F-codes reference `tests/project-catchup-baseline-observations.md`.
 
 | Rationalization | Reality |
 |---|---|
@@ -111,7 +111,7 @@ Ordered by what actually fired in the baseline (no-skill) run. F-codes reference
 | "I covered the big features — close enough." | **(F2)** A missed migration / env var blocks the first run. The Phase 3 scan is systematic and mandatory, not best-effort. The baseline surfaced 0 of 5 action items. |
 | "Only additions matter." | **(F3)** A removed dependency or a renamed/deleted env key breaks local dev too. Add / remove / rename are all first-class. The baseline said "no new dependencies" while `moment` was removed and `stripe` added. |
 | "I noticed the uncommitted edits and the feature-branch work — I'll fold those into what changed." | **(F7)** Local divergence is collision context, surfaced in Phase 4's own "Affects your work" section — distinct from "what landed on `origin/<target>`." The baseline produced no genuine collision analysis because it never fetched the incoming changes to compare local state against. |
-| "The base is whatever I picked — just diff it." | **(F9 — base-ancestry aspect)** If the base isn't an ancestor of the target (it may live on your divergent branch, or history was rewritten), the diff is wrong. Verify ancestry; warn and fall back. |
+| "The base is whatever I picked — just diff it." | **(F9 — base-ancestry aspect; preventive — exercised in the with-skill run, where the feature-branch base failed the guard, not in the baseline)** If the base isn't an ancestor of the target (it may live on your divergent branch, or history was rewritten), the diff is wrong. Verify ancestry; warn and fall back. |
 | "I don't know the migrate command, so I'll guess `npm run migrate`." | **(F5 — preventive; did not fire on the sonnet baseline, which read CLAUDE.md)** Infer from CLAUDE.md / package.json / Makefile. If unknown, say unknown — never fabricate a command. |
 | "I'll skim the git log first and read the docs later if needed." | **(F8 — preventive; the baseline read docs but git-first)** Orient on README + CLAUDE.md *before* git (Phase 0). It settles the branch question and grounds command inference. |
 | "Here's everything that changed." (flat dump) | **(F6 — preventive)** Brief, grouped, impact-aware. Summarise by area; the report is not a re-rendered `git log`. |
