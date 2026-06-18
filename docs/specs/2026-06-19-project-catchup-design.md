@@ -14,6 +14,7 @@ The value is the *synthesis plus the action list*: not "47 commits happened" but
 
 ## 2. Goals
 
+- **G0.** Orient on the project's own docs (`README`, `CLAUDE.md`) before resolving endpoints, asking the user, or reading git history — so every later phase runs with the project's stack, branch model, and commands already in hand.
 - **G1.** On invocation, resolve two endpoints — a *base* (the "catch up from" point) and a *target* branch (what the catchup is about) — robustly, asking the user only when genuinely ambiguous.
 - **G2.** Read the **actual diffs** between base and target, not just commit messages, and synthesise them into a brief, grouped, impact-aware summary.
 - **G3.** Systematically detect **action-required** items that block local dev — migrations, dependency changes, env-var changes, config/infra changes, breaking changes — covering additions, removals, *and* renames, and infer the exact fix command from the project (CLAUDE.md first).
@@ -48,7 +49,13 @@ Two failure modes define the skill by contrast: (1) paraphrasing `git log` as if
 
 ## 6. Procedure
 
-The skill runs in six phases. Phases 1–5 are mandatory; Phase 6 is optional and user-triggered.
+The skill runs in seven phases (0–6). Phases 0–5 are mandatory; Phase 6 is optional and user-triggered.
+
+### Phase 0 — Orient on project context (before anything else)
+
+Before resolving endpoints, asking the user anything, or reading any git history, read the project's own orientation docs: the root `README`, `CLAUDE.md` (and `AGENTS.md` / `CONTRIBUTING` if present). The goal is to enter Phase 1 already knowing the project's shape — its stack, package manager, branch model, setup/migrate/run commands, and env conventions — rather than inferring all of it cold from the diff.
+
+This priming pays off directly downstream: it can settle the primary-branch question without asking (Phase 1), and it is the first and authoritative source for the fix-command inference (Phase 3). If these docs are absent or thin, note that and proceed — orientation is best-effort context, not a gate. It does **not** replace reading the diff (Phase 2); it precedes it.
 
 ### Phase 1 — Resolve the two endpoints
 
@@ -139,6 +146,7 @@ Captured as rationalization rows in SKILL.md, in the house style. Each must trac
 
 | Rationalization | Reality |
 |---|---|
+| "I'll jump straight to the git log — the project context will emerge from the diff." | Orient on `README` + `CLAUDE.md` first (Phase 0). Knowing the stack, branch model, and commands up front settles the branch question and grounds command inference; cold-reading it from the diff is weaker and slower. |
 | "The commit messages tell me what changed — I'll summarise those." | Commit messages omit and misstate. Read the diff; it is the source of truth. |
 | "I covered the big features — close enough." | A missed migration / env var blocks the user's first run. The Phase 3 scan is systematic and mandatory, not best-effort. |
 | "Only additions matter." | A removed dependency or a renamed/deleted env key breaks local dev too. Add / remove / rename are all first-class. |
@@ -151,6 +159,7 @@ Captured as rationalization rows in SKILL.md, in the house style. Each must trac
 
 ## 9. Red flags — stop and re-read the skill
 
+- About to resolve endpoints, ask the user, or read git history without having read `README` + `CLAUDE.md` first (Phase 0).
 - About to report a catchup without having run `git diff` (commit messages only).
 - About to present the summary without a systematic action-required scan.
 - About to skip `git fetch` and compare against local refs without noting it.
