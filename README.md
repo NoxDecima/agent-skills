@@ -35,11 +35,13 @@ fi
 ln -s "$REPO/GLOBAL.md"                   ~/.claude/CLAUDE.md
 ln -s "$REPO/skills/followup-tracking"    ~/.claude/skills/followup-tracking
 ln -s "$REPO/skills/vault-brainstorming"  ~/.claude/skills/vault-brainstorming
+ln -s "$REPO/skills/project-catchup"      ~/.claude/skills/project-catchup
 
 # 4. Verify
 readlink -f ~/.claude/CLAUDE.md
 readlink -f ~/.claude/skills/followup-tracking
 readlink -f ~/.claude/skills/vault-brainstorming
+readlink -f ~/.claude/skills/project-catchup
 ```
 
 To activate additional personal skills landed in this repo, repeat step 3 with the new skill's directory. Smoke-test in a fresh Claude Code session — `GLOBAL.md`'s content should be in context, the project `CLAUDE.md` should also be in context when the cwd is this repo, and any installed personal skill should be listed under available skills.
