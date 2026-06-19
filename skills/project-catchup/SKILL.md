@@ -7,7 +7,7 @@ description: Use when a developer returns to a git project after time away and w
 
 ## Overview
 
-Catch a returning developer up on a git project: orient on the project's own docs, resolve a base ("from when") and a target branch ("about what"), read the actual diffs, systematically scan for action-required items (migrations, deps, env, config, breaking), flag what collides with the developer's own local work, and render an action-first brief.
+Catch a returning developer up on a git project: orient on the project's own docs, resolve a base ("from when") and a target branch ("about what"), read the actual diffs, systematically scan for action-required items (migrations, deps, env, config, breaking), flag what collides with the developer's own local work, and render a brief, two-part summary (what changed, then what it means for you).
 
 ## Core principle (load-bearing)
 
@@ -69,30 +69,35 @@ Convert "what changed" into "what changed that affects *you*". This is also wher
 
 - **Uncommitted overlaps:** files in `git status --porcelain` that also appear in the `<base>..origin/<target>` name-status → likely conflict on pull/rebase.
 - **Branch-dependency hits:** if on a feature branch, files it touched (`git diff --name-only <base>..HEAD`; for a branch that diverged before `<base>`, use `git diff --name-only $(git merge-base HEAD origin/<target>)..HEAD`) that the target also changed/renamed/moved → rebase won't be mechanical.
-- Report the local-behind count here as context. Omit the whole section if the tree is clean and sitting on the up-to-date target.
+- Report the local-behind count here as context. If the tree is clean and sitting on the up-to-date target, there are no collisions to report — omit the ⚠ line in the Phase 5 render.
 
 ### Phase 5 — Synthesise & render
 
-Group the diff into a few feature/area buckets, each with a **one-line impact** drawn from the diff (how behaviour changes), not a restated commit subject. Render action-first:
+Render in a **two-part, low-repetition** layout: a *What changed* digest, then a consolidated *What it means for you* list. State each change once in the digest (the fact + its impact); the second section gives the consequence/action **without re-describing the change**. No TL;DR line, and no separate "heads-up" / "affects you" sections — everything actionable converges in part two.
 
 ```
-## Catchup: <target> since <base> (<N> commits, <timespan>)
-TL;DR — <one-line theme>
+## Catchup: <target> — <N> commits, <timespan>
 
-⚠️ BEFORE YOU RESUME            ← Phase 3 items, with inferred commands
- 🗃 …  📦 …  🔑 …  ⚙️ …
-
-⚠️ AFFECTS YOUR WORK            ← Phase 4 (omit if empty)
+What changed
+ • <Area> — <short paragraph (1–3 sentences): what changed and its impact>
  • …
 
-### What changed                ← grouped by area, one-line impact each
- • <Area> — <impact>
+What it means for you
+ 🗃 run `<migrate cmd>`     (<pointer> · src: <CLAUDE.md|package.json|Makefile>)
+ 📦 run `<install cmd>`     (<what changed in deps>)
+ 🔑 edit `<env file>`: <new / renamed / removed keys>
+ 💥 <breaking change> — <what to adapt>
+ ⚠ your local work collides: <uncommitted overlaps; branch-dependency hits>
 
-### Heads-up / risky             ← breaking changes, large churn, reverts
- • …
+→ run the actions, or expand any area?
 ```
 
-Keep it **brief** — summarise by area, don't enumerate every file. The "before you resume" block leads; nothing buries it. Label inferred commands as inferred and sourced (CLAUDE.md / package.json / Makefile); state unknowns as unknown. End with the **apply / expand affordance**: offer to run the action steps and to expand any section on request.
+- **What changed** — one entry per *unique* change (group related commits into one entry), a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so it stays a scannable digest. Never enumerate every file.
+- **What it means for you** — one flat, type-iconed list consolidating Phase 3 action items (🗃 migration, 📦 deps, 🔑 env, ⚙️ config/infra — each with the inferred, sourced command), breaking-change adaptations (💥), and Phase 4 collisions (⚠). Each line points back to the change; it does **not** re-describe it. Keep the facets separate so nothing is said twice: the 💥 line states the adaptation every caller needs (e.g. "update callers of X"); anything that collides with *your own* branch or uncommitted edits belongs only on the ⚠ line, not restated on the 💥 line.
+- **Omit-empty**: no collisions → no ⚠ line; nothing to do → "Nothing to run — pull and continue".
+- **Ordering**: changes first, then implications.
+
+Label inferred commands as sourced (CLAUDE.md / package.json / Makefile); state unknowns as unknown. End with the **apply / expand affordance**: offer to run the actions and to expand any area on request.
 
 ### Phase 6 — Apply / expand (optional, user-triggered)
 
