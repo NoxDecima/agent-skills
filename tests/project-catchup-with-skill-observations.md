@@ -105,3 +105,29 @@ developer's own branch / uncommitted edits belong solely on the ⚠ line. (Wordi
 not separately re-tested — it can only reduce overlap, not regress the validated format.)
 
 **Verdict:** format revision is a net win — materially less repetition, same closure of F1–F11.
+
+---
+
+## Second refinement + real-repo / minimal-prompt validation (2026-06-19)
+
+Two further presentation-only tweaks (spec §14 follow-on): (1) *What it means for you* shows a line
+only for categories with content, folding every empty category into one `✅ otherwise clear` line
+(was: a line per empty category); (2) *What changed* attributes each entry to author(s) + commit count.
+
+Validated on a **real repo** (`/home/nox/Documents/Projects/Nox/wunderkit`, not the fixture) via a
+**minimal, skill-unaware prompt** — literally "I'm picking work back up in <repo>. Catch me up on the
+latest." with no skill mention, no base/branch/format guidance (only a read-only safety boundary):
+
+- **Auto-invocation confirmed.** The agent self-routed via `superpowers:using-superpowers` (global
+  CLAUDE.md, inherited by subagents) → dispatched `project-catchup` with no explicit instruction to.
+- **New format rendered correctly.** *What changed* entries attributed ("Christian Ziegler, ~7 commits";
+  "andre-locomind, ~3 commits"). *What it means for you* showed only 🔑 optional (env var, defaults
+  safely), ⚠ uncommitted-work note (no collision), and one `✅ otherwise clear` line — no per-empty-category
+  padding.
+- **No regression.** Correct axis (staging, fetched), merge-base base, recognised the dev's branch was
+  already merged (F11 avoided), read diffs, systematic action + collision scan, read-only respected
+  (only `git fetch`).
+
+This real-repo run doubles as the re-test for the presentation-only refinement; the deterministic fixture
+was not separately re-run (the change touches only Phase 5 rendering, and the messier real-repo data is a
+stronger exercise of it).
