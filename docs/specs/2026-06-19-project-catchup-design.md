@@ -1,7 +1,7 @@
 # project-catchup — Design
 
 **Date:** 2026-06-19
-**Status:** Accepted — implemented 2026-06-19 (skill at `skills/project-catchup/SKILL.md`)
+**Status:** Accepted — implemented 2026-06-19 (skill at `skills/project-catchup/SKILL.md`); output format revised 2026-06-19 (see §14)
 **Scope:** A new personal skill that catches a returning developer up on what changed in a project since a past point, understands the impact, and surfaces what must be done locally before resuming development.
 
 ## 1. Motivation
@@ -19,7 +19,7 @@ The value is the *synthesis plus the action list*: not "47 commits happened" but
 - **G2.** Read the **actual diffs** between base and target, not just commit messages, and synthesise them into a brief, grouped, impact-aware summary.
 - **G3.** Systematically detect **action-required** items that block local dev — migrations, dependency changes, env-var changes, config/infra changes, breaking changes — covering additions, removals, *and* renames, and infer the exact fix command from the project (CLAUDE.md first).
 - **G4.** Surface **what affects the returning developer specifically**: overlaps between what landed and their own local state (uncommitted changes, current branch).
-- **G5.** Render in an **action-first, sectioned** format that makes "before you resume" impossible to miss, and offer to run the steps or expand any section.
+- **G5.** Render in a **two-part, low-repetition** format — a *What changed* digest (the facts, a short paragraph per unique change) followed by a consolidated *What it means for you* list (action items, breaking-change adaptations, and collisions, each fact stated once) — and offer to run the actions or expand any area.
 
 ## 3. Non-goals (v1)
 
@@ -104,28 +104,33 @@ Omit this section entirely if there is no local divergence (clean tree, sitting 
 
 ### Phase 5 — Synthesise & render
 
-Group the diff into a small number of feature/area buckets, each with a **one-line impact** drawn from the diff (what it changes about how the project behaves), not a restated commit subject. Render in the **action-first, sectioned** format:
+Render in a **two-part, low-repetition** layout: a *What changed* digest, then a consolidated *What it means for you* list. The division of labour is strict — the digest states each change once (the fact + its impact); the second section states the consequence/action **without re-describing the change**. There is no separate TL;DR line and no separate "heads-up"/"affects you" sections; everything actionable converges in part two.
 
 ```
-## Catchup: <target> since <base> (<N> commits, <timespan>)
-TL;DR — <one-line theme of the whole window>
+## Catchup: <target> — <N> commits, <timespan>
 
-⚠️ BEFORE YOU RESUME            ← Phase 3 items, with inferred commands
- 🗃 …  📦 …  🔑 …  ⚙️ …
-
-⚠️ AFFECTS YOUR WORK            ← Phase 4 (omit if empty)
+What changed
+ • <Area> — <a short paragraph (1–3 sentences): what changed and its impact>
  • …
 
-### What changed                ← grouped by area, one-line impact each
- • <Area> — <impact>
+What it means for you
+ 🗃 run `<migrate cmd>`     (<pointer> · src: <CLAUDE.md|package.json|Makefile>)
+ 📦 run `<install cmd>`     (<what changed in deps>)
+ 🔑 edit `<env file>`: <new / renamed / removed keys>
+ 💥 <breaking change> — <what to adapt>
+ ⚠ your local work collides: <uncommitted overlaps; branch-dependency hits>
 
-### Heads-up / risky             ← breaking changes, large churn, reverts
- • …
+→ run the actions, or expand any area?
 ```
 
-Keep it **brief**: summarise by area, do not enumerate every file or commit. The "before you resume" block leads; nothing buries it.
+Rules:
 
-End with the **apply / expand affordance**: offer to run the action steps (migrations, install) and to expand any section on request — e.g. "Want me to run these, or expand any area (e.g. 'detail the billing changes')?"
+- **What changed** — one entry per *unique* change (group related commits into one entry), a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so the digest stays scannable. Never enumerate every file.
+- **What it means for you** — a single flat, type-iconed list consolidating Phase 3 action items (🗃 migration, 📦 deps, 🔑 env, ⚙️ config/infra — each with the inferred, sourced command), breaking-change adaptations (💥), and Phase 4 collisions (⚠). Each line carries only a short pointer back to the change, never a re-description.
+- **Omit-empty**: drop the ⚠ line when there are no collisions; if nothing must be done, say "Nothing to run — pull and continue".
+- **Ordering**: changes first, then implications.
+
+End with the **apply / expand affordance**: offer to run the actions (migrations, install) and to expand any area on request — e.g. "Want me to run the actions, or expand any area (e.g. 'detail the payments changes')?"
 
 ### Phase 6 — Apply / expand (optional, user-triggered)
 
@@ -135,10 +140,11 @@ Only on explicit user request:
 
 ## 7. Output principles
 
-- Action-first: the "before you resume" block is never below the fold.
+- **Two-part, each fact once**: a *What changed* digest, then a consolidated *What it means for you* list. A change's detail lives in exactly one framing; the second section carries only a pointer, never a restatement. (Supersedes the earlier "action-first, five-section" layout, which restated each fact across up to four sections — see §14.)
+- **Density scales with count**: a short paragraph per unique change when changes are few; compress to one-liners when many. The digest stays scannable either way.
 - Brief by default, expandable on request — the brief is a launch pad, not a dead end.
-- Every impact line traces to the diff. No impact claim that the diff doesn't support.
-- Inferred commands are labelled as inferred and sourced (CLAUDE.md / package.json / Makefile); unknown commands are stated as unknown, never fabricated.
+- Every change/impact line traces to the diff. No claim the diff doesn't support.
+- Inferred commands are labelled and sourced (CLAUDE.md / package.json / Makefile); unknown commands are stated as unknown, never fabricated.
 
 ## 8. Anti-patterns to close (rationalizations)
 
@@ -209,3 +215,14 @@ Per project `CLAUDE.md`, skill edits follow the `superpowers:writing-skills` TDD
 - The exact caution level of the apply step (Phase 6, in v1): whether "apply" first emits a copy-paste command block for the user to run, or executes each command itself after a per-command confirmation. The design fixes that mutation is confirmation-gated and one-at-a-time; the plan picks the precise interaction.
 
 These are implementation details, not design questions, and belong in the plan.
+
+## 14. Revision — output format (2026-06-19)
+
+After the first build, the with-skill run surfaced that the original **action-first, five-section** layout (TL;DR · Before you resume · Affects your work · What changed · Heads-up) restated each change across up to four sections — accurate and useful, but repetitive and longer than necessary.
+
+Revised to a **two-part, low-repetition** layout (§6 Phase 5, §7):
+
+1. **What changed** — a digest with a short paragraph per *unique* change (the facts + impact), one entry per change with related commits grouped. Density scales inversely with the number of changes.
+2. **What it means for you** — a single flat, type-iconed list consolidating action items (🗃📦🔑⚙️), breaking-change adaptations (💥), and local-collision warnings (⚠) that previously lived in three separate sections. Each line points back to the change rather than re-describing it.
+
+No separate TL;DR. Ordering is changes-first, then implications. The change is a presentation-layer revision only — Phases 0–4 (fetch/axis discipline, action-required scan, collision detection) are unchanged, so the closed baseline failures (F1–F11) remain closed; the with-skill run is re-recorded against the new format.
