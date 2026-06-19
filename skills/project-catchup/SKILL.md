@@ -79,22 +79,25 @@ Render in a **two-part, low-repetition** layout: a *What changed* digest, then a
 ## Catchup: <target> — <N> commits, <timespan>
 
 What changed
- • <Area> — <short paragraph (1–3 sentences): what changed and its impact>
+ • <Area> (<author(s)>, <n> commits) — <short paragraph (1–3 sentences): what changed and its impact>
  • …
 
 What it means for you
  🗃 run `<migrate cmd>`     (<pointer> · src: <CLAUDE.md|package.json|Makefile>)
- 📦 run `<install cmd>`     (<what changed in deps>)
- 🔑 edit `<env file>`: <new / renamed / removed keys>
  💥 <breaking change> — <what to adapt>
  ⚠ your local work collides: <uncommitted overlaps; branch-dependency hits>
+ 🔑 optional — <changed but needs no action, e.g. a new env var that defaults safely>
+ ✅ otherwise clear: <every empty category, in one line — e.g. no migrations, deps, breaking changes, collisions>
 
 → run the actions, or expand any area?
 ```
 
-- **What changed** — one entry per *unique* change (group related commits into one entry), a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so it stays a scannable digest. Never enumerate every file.
-- **What it means for you** — one flat, type-iconed list consolidating Phase 3 action items (🗃 migration, 📦 deps, 🔑 env, ⚙️ config/infra — each with the inferred, sourced command), breaking-change adaptations (💥), and Phase 4 collisions (⚠). Each line points back to the change; it does **not** re-describe it. Keep the facets separate so nothing is said twice: the 💥 line states the adaptation every caller needs (e.g. "update callers of X"); anything that collides with *your own* branch or uncommitted edits belongs only on the ⚠ line, not restated on the 💥 line.
-- **Omit-empty**: no collisions → no ⚠ line; nothing to do → "Nothing to run — pull and continue".
+- **What changed** — one entry per *unique* change (group related commits into one entry), **attributed to its author(s) and commit count** where that adds context (e.g. "Auth rename (Christian, 6 commits) — …"); a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so it stays a scannable digest. Never enumerate every file.
+- **What it means for you** — a flat, type-iconed list with **a line only for categories that have something to say**. Three tiers, in this order:
+  - *Needs action* (must-do before building): 🗃 migration, 📦 deps, 🔑 required env, ⚙️ config/infra (each with the inferred, sourced command), 💥 breaking-change adaptations, ⚠ collisions with your local work — one line each.
+  - *Present but optional* (it changed, but needs no action — e.g. a new env var that defaults safely, or "your own work already merged"): a brief line each (category icon + "optional —", or a plain note for context), so real signal isn't dropped.
+  - *Otherwise clear*: collapse **every entirely-empty category into one `✅ otherwise clear: …` line** (e.g. "no migrations, dependency changes, breaking changes, or collisions"). Never spend a line per empty category — that padding is the noise this section exists to avoid.
+  If nothing needs action at all, lead with "Nothing required before building — pull and continue", then the optional notes + the clear line. Keep the facets separate so nothing is said twice: the 💥 line states the adaptation every caller needs (e.g. "update callers of X"); anything that collides with *your own* branch or uncommitted edits belongs only on the ⚠ line.
 - **Ordering**: changes first, then implications.
 
 Label inferred commands as sourced (CLAUDE.md / package.json / Makefile); state unknowns as unknown. End with the **apply / expand affordance**: offer to run the actions and to expand any area on request.

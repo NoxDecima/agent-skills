@@ -110,24 +110,24 @@ Render in a **two-part, low-repetition** layout: a *What changed* digest, then a
 ## Catchup: <target> — <N> commits, <timespan>
 
 What changed
- • <Area> — <a short paragraph (1–3 sentences): what changed and its impact>
+ • <Area> (<author(s)>, <n> commits) — <a short paragraph (1–3 sentences): what changed and its impact>
  • …
 
 What it means for you
  🗃 run `<migrate cmd>`     (<pointer> · src: <CLAUDE.md|package.json|Makefile>)
- 📦 run `<install cmd>`     (<what changed in deps>)
- 🔑 edit `<env file>`: <new / renamed / removed keys>
  💥 <breaking change> — <what to adapt>
  ⚠ your local work collides: <uncommitted overlaps; branch-dependency hits>
+ 🔑 optional — <changed but needs no action, e.g. a new env var that defaults safely>
+ ✅ otherwise clear: <every empty category, in one line — e.g. no migrations, deps, breaking changes, collisions>
 
 → run the actions, or expand any area?
 ```
 
 Rules:
 
-- **What changed** — one entry per *unique* change (group related commits into one entry), a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so the digest stays scannable. Never enumerate every file.
-- **What it means for you** — a single flat, type-iconed list consolidating Phase 3 action items (🗃 migration, 📦 deps, 🔑 env, ⚙️ config/infra — each with the inferred, sourced command), breaking-change adaptations (💥), and Phase 4 collisions (⚠). Each line carries only a short pointer back to the change, never a re-description.
-- **Omit-empty**: drop the ⚠ line when there are no collisions; if nothing must be done, say "Nothing to run — pull and continue".
+- **What changed** — one entry per *unique* change (group related commits into one entry), **attributed to its author(s) and commit count** where that adds context, a short paragraph each conveying what it is and its impact. Density scales inversely with count: few changes → a short paragraph each; many → compress to one-liners and/or coarser grouping so the digest stays scannable. Never enumerate every file.
+- **What it means for you** — a flat, type-iconed list with **a line only for categories that have something to say**, in three tiers: (1) *needs action* (must-do before building) — 🗃 migration, 📦 deps, 🔑 required env, ⚙️ config/infra each with the inferred sourced command, 💥 breaking-change adaptations, ⚠ collisions; (2) *present but optional* (changed but no action needed, e.g. a new env var that defaults safely, or "your own work already merged") — a brief line each so real signal isn't dropped; (3) *otherwise clear* — collapse **every entirely-empty category into one `✅ otherwise clear: …` line**, never a line per empty category. If nothing needs action, lead with "Nothing required before building — pull and continue".
+- **No double-statement**: the 💥 line states the generic caller-facing adaptation; collisions with the developer's own branch / uncommitted edits live only on the ⚠ line.
 - **Ordering**: changes first, then implications.
 
 End with the **apply / expand affordance**: offer to run the actions (migrations, install) and to expand any area on request — e.g. "Want me to run the actions, or expand any area (e.g. 'detail the payments changes')?"
@@ -226,3 +226,8 @@ Revised to a **two-part, low-repetition** layout (§6 Phase 5, §7):
 2. **What it means for you** — a single flat, type-iconed list consolidating action items (🗃📦🔑⚙️), breaking-change adaptations (💥), and local-collision warnings (⚠) that previously lived in three separate sections. Each line points back to the change rather than re-describing it.
 
 No separate TL;DR. Ordering is changes-first, then implications. The change is a presentation-layer revision only — Phases 0–4 (fetch/axis discipline, action-required scan, collision detection) are unchanged, so the closed baseline failures (F1–F11) remain closed; the with-skill run is re-recorded against the new format.
+
+**Follow-on (after the first real-repo demo).** Two further tweaks, both presentation-only:
+
+1. **Collapse the no-action categories.** The first cut still printed a line per category even when empty ("no migrations", "no dependency changes", …). Revised so *What it means for you* shows a line only for categories that have something — must-do items, then present-but-optional items (a changed-but-safe env var, "your own work already merged"), then **one** `✅ otherwise clear: …` line folding every empty category. If nothing needs action, it leads with "Nothing required — pull and continue".
+2. **Attribute changes to authors.** Each *What changed* entry names its author(s) and commit count where useful (e.g. "Auth rename (Christian, 6 commits) — …") — surfaced spontaneously in the demo, now a format rule.
