@@ -74,3 +74,34 @@ confirming that path works end-to-end. **No iteration needed — Task 10 skipped
 Note: skill invocation was explicit ("use the project-catchup skill") to reliably exercise
 efficacy; auto-triggering from the description is a separate concern, validated by the skill
 appearing in the harness skill list with a trigger-appropriate description.
+
+---
+
+## Re-run after output-format revision (2026-06-19)
+
+The output format was revised after this build (spec §14): the action-first five-section
+layout was replaced by a two-part layout — a *What changed* digest (short paragraph per
+unique change) then a consolidated *What it means for you* list (actions / breaking / collisions,
+type-iconed, each fact once). Phases 0–4 are unchanged, so this is a presentation-layer change;
+the pressure test was re-run against the new format to confirm no regression.
+
+**Result (sonnet, same fixture + prompt):** the new two-part format rendered correctly — header
+(identity only, no TL;DR), a 4-entry *What changed* digest (the model grouped the Stripe deps+env
+commits into one "Payments" entry, as intended), then the consolidated *What it means for you*
+list with 🗃📦🔑⚙️ action items, a 💥 breaking-change line, and a ⚠ collision line, then the
+apply/expand affordance.
+
+**Regression check — all F1–F11 remain closed:** fetched first (F4), read README+CLAUDE.md
+before git (F8), correct axis + ancestry-guard fallback (F9), 5/5 action items with
+CLAUDE.md-sourced commands (F2/F5), `moment` removal + `DB_URL`→`DATABASE_URL` rename caught (F3),
+diffs read not messages (F1), brief grouped digest not a log dump (F6), both collisions surfaced
+(F7), mutation gated behind an offer (F10), incoming changes (not the dev's own work) reported as
+the changeset with the dev's work in the ⚠ line (F11).
+
+**One minor residual + fix:** the auth collision appeared on *both* the 💥 line and the ⚠ line
+(adaptation vs rebase-pain — arguably different facets, but a mild repeat). Phase 5 was tightened
+to keep the facets separate: the 💥 line states the generic adaptation only; collisions with the
+developer's own branch / uncommitted edits belong solely on the ⚠ line. (Wording clarification;
+not separately re-tested — it can only reduce overlap, not regress the validated format.)
+
+**Verdict:** format revision is a net win — materially less repetition, same closure of F1–F11.
