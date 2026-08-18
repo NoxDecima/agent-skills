@@ -102,7 +102,7 @@ Baseline for comparison: tests/skill-from-session-baseline-observations.md
 
 - Closed:
   - **Fixed-vs-parameter transparency (baseline's fragile spot).** The
-    Phase 2 mandate demonstrably changed behavior: the parameters-vs-baked-in
+    Phase 2 mandate changed behavior in this run: the parameters-vs-baked-in
     veto split appeared fully labeled in the first response, where the
     baseline surfaced it only partially and later. This is the one place the
     skill had to move behavior rather than merely pin it, and it did.
@@ -113,8 +113,8 @@ Baseline for comparison: tests/skill-from-session-baseline-observations.md
     disposition is now pinned by explicit skill text and was reproduced under
     it across all 7 rubric dimensions — but this is one run on the same
     strong model; the pin is verified once, not proven robust across models.
-- Leaked: none observed — no baseline behavior regressed and no rubric
-  dimension was missed. Spec paths unexercised in the baseline remain
+- Leaked: none observed — no rubric dimension regressed; one baseline extra
+  (the `mkdir -p` mention, per item 6) did not reappear. Spec paths unexercised in the baseline remain
   unexercised here, unchanged by this run: the no-coherent-workflow stop, the
   never-hunt-for-transcript-files rule, the multiple-candidate-workflows ask
   (flake8 was again an easy unilateral scope-out), and the actual-collision
