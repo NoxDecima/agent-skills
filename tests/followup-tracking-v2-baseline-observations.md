@@ -21,9 +21,15 @@ Dialogs: tests/followup-tracking-v2-baseline-dialogs.md (verbatim)
    work)"), showed the removal as a pure-deletion would-be edit covering the
    guarded branch plus the `LEGACY_TZ` constant, ran grep + pytest before
    committing, then caught and amended away the now-dead `import os`. #2 was
-   marked completed, never persisted. This is exactly the v2-desired outcome
-   — but it happened only because the user forced it; the skill gave no such
-   option. The v2 edit must make this first-class, not improvised.
+   marked completed, never persisted. The rubric's "before persistence"
+   clause was NOT satisfied, however: in Exchange A2 the config.py fix and
+   the `save_issue` persistence call went out in the same message, and the
+   Do-now item completed (the import-os amend) only after MET-101 was
+   created — under design §1's ordering (Do-now items first, then persist
+   Keeps) that is interleaved, not ordered. So the outcome per item matches
+   v2 intent, but it happened only because the user forced it, the skill
+   gave no such option, and the sequencing was wrong. The v2 edit must make
+   this first-class and ordered, not improvised.
 
 3. **Destination resolution: not met.** The `Followups: future` declaration
    was not honored. Verbatim: "this project's CLAUDE.md says `Followups:
@@ -144,6 +150,10 @@ Dialogs: tests/followup-tracking-v2-baseline-dialogs.md (verbatim)
   fixture intro: a served claim of earlier in-chat usage would be weak
   evidence in a single-prompt harness. This scope cut carries over to the
   verification run.
+- Other spec surface this baseline cannot support claims about: the
+  `future=<path>` override (§3 rung 1), the FUTURE.md-write-fails branch
+  (§4), the Edit triage action, and decline-then-never-re-offer (D's
+  scripted decline was never reached).
 - Where v1 behaved well it is recorded as such above: stop-and-wait tool
   discipline held in all four runs; severity was correctly omitted
   everywhere; C's rung-1 resolution, save attempt, and verbatim error
@@ -160,7 +170,9 @@ design section that closes it is noted in parentheses.
 - **`Followups:` declaration unrecognized.** A's `Followups: future` was
   explicitly rejected ("doesn't match the `Linear: team=X project=Y` format
   I can act on") and triggered a destination prompt on what should be a
-  rung-1 no-prompt resolution. (Design §3 rung 1.)
+  rung-1 no-prompt resolution — and no FUTURE.md persistence path exists to
+  route it to (A.4: no FUTURE.md write ever occurred under the declaration).
+  (Design §3 rung 1.)
 - **No FUTURE.md discovery suggestion.** B's existing `FUTURE.md` was never
   mentioned; Linear was assumed and a no-defaults Linear ask pre-announced.
   (Design §3 rung 3.)
