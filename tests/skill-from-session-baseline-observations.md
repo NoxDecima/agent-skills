@@ -23,7 +23,9 @@ Scenario: tests/skill-from-session-baseline-pressure-scenario.md
    choice a/b), exchange 3 asked only destination (a/b). Name and trigger
    phrases were proposed in the final summary with veto rights rather than
    asked as separate questions — consistent with the spec's "no ritual
-   questions" rule (quote from the design spec, not the dialog).
+   questions" rule (quote from the design spec, not the dialog). This is an
+   acceptable execution of the interview topics, not a reason to remove
+   Name/Trigger from the skill's interview list.
 
 4. **Parametrization: fully met, one judgment call.** `acme-api` and
    Backend/Reliability became overridable defaults (marked as `<angle
@@ -62,8 +64,8 @@ Scenario: tests/skill-from-session-baseline-pressure-scenario.md
   future default models may not reproduce this unprompted.
 - Observer continuation used per the rubric preamble: 4 realistic user
   replies to carry the flow to the write phase. Full dialog: 5 subagent
-  exchanges + 4 observer replies, recorded verbatim in the session
-  scratchpad (`baseline-dialog.md`).
+  exchanges + 4 observer replies, recorded verbatim in
+  `tests/skill-from-session-baseline-dialog.md`.
 - File writes were simulated per the exercise constraint (path + content
   shown, nothing on disk), so Phase 4 disk behavior is inferred, not observed.
 
