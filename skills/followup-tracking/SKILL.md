@@ -212,3 +212,5 @@ If any of these fire, the skill is being violated. Stop, capture what should be 
 REQUIRED BACKGROUND for editing this skill: superpowers:writing-skills (TDD-for-skills, rationalization closure).
 
 The canonical pressure scenario this skill was written against is in `tests/baseline-pressure-scenario.md`; the failure modes it must close are in `tests/baseline-observations.md`.
+
+v2 (triage/persistence rework) evidence: `tests/followup-tracking-v2-pressure-scenario.md` (scenario), `tests/followup-tracking-v2-baseline-observations.md` (v1 baseline), `tests/followup-tracking-v2-with-skill-observations.md` (v2 verification).
