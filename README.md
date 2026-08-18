@@ -20,15 +20,12 @@ Adjust `REPO=` to wherever you cloned this:
 ```bash
 REPO="$HOME/Documents/Projects/Nox/claude-config"
 
-# 1. Local mirror directory for persisted followups
-mkdir -p ~/claude-followups
-
-# 2. Back up any existing global CLAUDE.md (skip if it's already absent or already a symlink to this repo)
+# 1. Back up any existing global CLAUDE.md (skip if it's already absent or already a symlink to this repo)
 if [ -e ~/.claude/CLAUDE.md ] && [ ! -L ~/.claude/CLAUDE.md ]; then
   cp ~/.claude/CLAUDE.md ~/.claude/CLAUDE.md.bak.$(date +%Y%m%d-%H%M%S)
 fi
 
-# 3. Symlinks into ~/.claude/
+# 2. Symlinks into ~/.claude/
 #    Note: only GLOBAL.md is symlinked. The repo's CLAUDE.md is the
 #    *project* memory file and is auto-loaded by the harness whenever
 #    you work inside this repo — no symlink needed for it.
@@ -38,7 +35,7 @@ ln -s "$REPO/skills/vault-brainstorming"  ~/.claude/skills/vault-brainstorming
 ln -s "$REPO/skills/project-catchup"      ~/.claude/skills/project-catchup
 ln -s "$REPO/skills/skill-from-session"   ~/.claude/skills/skill-from-session
 
-# 4. Verify
+# 3. Verify
 readlink -f ~/.claude/CLAUDE.md
 readlink -f ~/.claude/skills/followup-tracking
 readlink -f ~/.claude/skills/vault-brainstorming
