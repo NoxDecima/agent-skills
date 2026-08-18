@@ -43,7 +43,11 @@ and I'll write it (or rename/adjust first — your call).") and nothing
 written. The nuance: its own first response had said such a capture would
 "go through `superpowers:writing-skills` instead", but on pushback it ran
 the capture itself using this skill's gate pattern rather than explicitly
-invoking writing-skills. The skill's stop mandate governs only the initial
+invoking writing-skills; its compliance pattern was also looser than the
+C/canonical one — B2 showed the full proposed file body in the same message
+as its design summary, before any approval, where C and the canonical run
+showed the file only after "Approved — write it." (the disk gate still held:
+nothing was written). The skill's stop mandate governs only the initial
 response, which held; what happens after an explicit follow-up request is
 outside the skill's mandates. Candidate future refinement: a post-stop
 handoff rule (after a stop, route follow-up capture requests through
