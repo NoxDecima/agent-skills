@@ -14,7 +14,7 @@ Capture deferrable items the moment you notice them, surface them at task comple
 **Capture is automatic. Persistence is explicit.**
 
 - **Capture** = a `TaskCreate` call. Naming an item in a summary, calling it "untouched," or noting it parenthetically is **not** capture.
-- **Persistence** (Linear, local mirror) happens only on explicit user `Keep` during triage.
+- **Persistence** (Linear, FUTURE.md) happens only on explicit user `Keep` during triage.
 
 **Scope-compliance and capture are independent axes.** "Do not modify X" is a *modification* boundary. It is **not** a gag order. Items you may not edit, you must still record.
 
@@ -72,11 +72,18 @@ When the active task is about to be summarized or handed off, list captured foll
 ```
 [<severity if set>] <subject>
   origin: <description>
-  action: Keep / Drop / Edit?
+  action: Do now / Keep / Drop / Edit?
 ```
 
-Wait for the user's per-item decision:
+Wait for the user's per-item decision. **Do now** is listed first as the
+suggested default.
 
+- **Do now** → fix it in this session. Collect all per-item decisions first;
+  then execute Do-now items one at a time in list order, then persist the
+  Keeps. If a Do-now item balloons mid-fix (more than a contained change),
+  pause it and re-offer Keep/Drop for that item instead of sinking time.
+  Completed Do-now items are marked completed in TaskList and are never
+  persisted.
 - **Keep** → proceed to Persist for that item
 - **Drop** → delete from TaskList; not persisted anywhere
 - **Edit** → take revised subject/description, re-present that item
@@ -85,15 +92,20 @@ If zero followups were captured, skip this phase silently. Do not fabricate item
 
 ### 3. Persist (only on Keep)
 
-Two destinations. Linear first, then local mirror.
-
-**Linear** (tool: `mcp__linear-server__save_issue`)
+Destinations: `linear`, `future` (a FUTURE.md file), or `both`.
 
 Destination resolution, in this exact order:
 
-1. If your loaded project memory (the harness's project-`CLAUDE.md`, already in your context) contains a line like `Linear: team=X project=Y`, use those values without prompting. Do not go searching the filesystem — only the project memory already present in context counts. (Project `CLAUDE.md` is an explicit stable preference and beats session memory.)
-2. Else, if a Linear team+project was used earlier in **this chat**, suggest those as defaults in a confirmation prompt: `Persist to team=X project=Y? [Y]es / different / skip`. The suggestion is a default, never a silent reuse.
-3. Else, prompt the user for team and project with no defaults.
+1. If your loaded project memory (the harness's project-`CLAUDE.md`, already in your context) contains a `Followups: linear | future | both` line (optional path override `future=<path>`), use it without prompting. Backward compatible: a project memory with only a `Linear: team=X project=Y` line resolves to `linear`. Do not go searching the filesystem — only the project memory already present in context counts.
+2. Else, if a destination was used earlier in **this chat**, suggest it as a default in a confirmation prompt. The suggestion is a default, never a silent reuse.
+3. Else, if a `FUTURE.md` exists at the project root, suggest it as the default in the clarification question — never silently use it.
+4. Else, prompt the user with no defaults.
+
+**Record the choice:** when the destination was resolved by asking (rungs 3–4 — no declaration existed), offer once to record it as a `Followups:` line in the project CLAUDE.md so future sessions resolve at rung 1. Apply only on explicit acceptance; if declined, do not re-offer this session.
+
+**Linear** (when the destination includes `linear`; tool: `mcp__linear-server__save_issue`)
+
+Team and project come from the `Linear: team=X project=Y` line when declared; else from this chat's earlier usage (confirm as a default); else prompt.
 
 **Linear call shape:**
 
@@ -136,25 +148,31 @@ Rendering rules:
 - **Omit any section entirely** when its content would be empty or "n/a" — never produce a heading with no content beneath it.
 - Reconstruct missing fields from surrounding capture context when possible; only fall back to a generic placeholder like "Out of scope for the surfacing task." if no better content is available.
 
-Create the issue. Capture the returned Linear issue ID for the local mirror line.
+Create the issue. Capture the returned Linear issue ID for the FUTURE.md `Linear:` sub-line (used when the destination is `both`).
 
-**Local mirror** — always *attempt to* append to `~/claude-followups/YYYY-MM-DD.md`, one record per Kept item; on failure see Failure handling.
+**FUTURE.md** (when the destination includes `future`)
 
-Format depends on whether severity was set at capture:
+- Path: `FUTURE.md` at the project root, or the declared `future=<path>`.
+- If the file does not exist, create it with a `# FUTURE` header.
+- Append to the end of the open list, following the TODO.md convention
+  (github.com/todo-md/todo-md):
 
-```
-- [HH:MM][<severity>] <subject>          # when severity is present
-- [HH:MM] <subject>                       # when severity is absent (omit the second bracket entirely)
-  origin: <description>
-  linear: <issue-id-or-FAILED>
-```
+  ```markdown
+  - [ ] <subject>
+    <context: surfaced-during, origin file:line, why deferred, suggested
+    next step — as much as the item needs — ending with (YYYY-MM-DD)>
+    Linear: <issue-id>
+  ```
 
-The mirror is the durable backup; it is appended whether Linear succeeded or failed.
+  The `Linear:` sub-line appears only when the destination is `both`.
+- Ticking `- [x]` is the user's business; the skill does not manage entry
+  lifecycle.
 
 ## Failure handling
 
-- **Linear MCP unavailable or errors.** Surface the error to the user verbatim. Write the local mirror line with `linear: FAILED`. Do not silently swallow.
-- **Local file write fails.** Surface to user. Do not roll back the Linear issue. User decides whether to retry the local write.
+- **Linear MCP unavailable or errors.** Surface the error to the user verbatim and offer to write the item to FUTURE.md instead, so the item is not lost. Do not silently swallow.
+- **FUTURE.md write fails.** Surface the error to the user verbatim.
+- In every failure case the item stays in TaskList until successfully persisted or explicitly dropped. TaskList is the only in-flight safety net; swallowing a persistence failure is a violation.
 - **No followups captured.** Triage phase is skipped silently.
 
 ## Rationalizations — these are violations, not exceptions
