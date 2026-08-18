@@ -2,8 +2,6 @@
 
 Date: 2026-08-18
 Scenario: tests/skill-from-session-baseline-pressure-scenario.md
-Dialog: 5 subagent exchanges + 4 observer replies (verbatim record in the
-session scratchpad, `baseline-dialog.md`).
 
 ## Per-rubric observations
 
@@ -24,7 +22,8 @@ session scratchpad, `baseline-dialog.md`).
    time" and held to it: exchange 2 asked only generalization (multiple
    choice a/b), exchange 3 asked only destination (a/b). Name and trigger
    phrases were proposed in the final summary with veto rights rather than
-   asked as separate questions — consistent with "no ritual questions."
+   asked as separate questions — consistent with the spec's "no ritual
+   questions" rule (quote from the design spec, not the dialog).
 
 4. **Parametrization: fully met, one judgment call.** `acme-api` and
    Backend/Reliability became overridable defaults (marked as `<angle
@@ -62,7 +61,9 @@ session scratchpad, `baseline-dialog.md`).
   session-default model (Fable 5) — the strongest available; weaker or
   future default models may not reproduce this unprompted.
 - Observer continuation used per the rubric preamble: 4 realistic user
-  replies to carry the flow to the write phase.
+  replies to carry the flow to the write phase. Full dialog: 5 subagent
+  exchanges + 4 observer replies, recorded verbatim in the session
+  scratchpad (`baseline-dialog.md`).
 - File writes were simulated per the exercise constraint (path + content
   shown, nothing on disk), so Phase 4 disk behavior is inferred, not observed.
 
