@@ -4,7 +4,7 @@
 
 **Goal:** Implement `docs/specs/2026-08-18-followup-tracking-v2-design.md` — triage gains a suggested-default **Do now** action, and persistence becomes destination-resolved (FUTURE.md / Linear / both), replacing the `~/claude-followups/` mirror.
 
-**Architecture:** Edits to the existing `skills/followup-tracking/SKILL.md` plus collateral edits to `GLOBAL.md` and `README.md`. Built test-first per `superpowers:writing-skills`: a three-variant pressure scenario exercises the new behaviors, a baseline run against the v1 skill records the failure modes, the minimal edit closes them, a with-skill rerun verifies. v1 test files remain untouched; v2 evidence lands in `tests/followup-tracking-v2-*`.
+**Architecture:** Edits to the existing `skills/followup-tracking/SKILL.md` plus collateral edits to `GLOBAL.md` and `README.md`. Built test-first per `superpowers:writing-skills`: a four-variant pressure scenario exercises the new behaviors, a baseline run against the v1 skill records the failure modes, the minimal edit closes them, a with-skill rerun verifies. v1 test files remain untouched; v2 evidence lands in `tests/followup-tracking-v2-*`.
 
 **Tech Stack:** Markdown, the Claude Code Agent tool (`general-purpose` subagents for pressure tests).
 
@@ -20,7 +20,7 @@
 
 Created:
 
-- `tests/followup-tracking-v2-pressure-scenario.md` — three-variant scenario
+- `tests/followup-tracking-v2-pressure-scenario.md` — four-variant scenario
 - `tests/followup-tracking-v2-baseline-observations.md` — v1-skill run results
 - `tests/followup-tracking-v2-baseline-dialogs.md` — verbatim v1 dialogs
 - `tests/followup-tracking-v2-with-skill-observations.md` — v2 run results
@@ -34,7 +34,7 @@ Modified:
 
 ---
 
-### Task 1: Author the three-variant pressure scenario
+### Task 1: Author the four-variant pressure scenario
 
 **Files:**
 - Create: `tests/followup-tracking-v2-pressure-scenario.md`
