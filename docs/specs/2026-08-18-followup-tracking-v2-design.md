@@ -77,7 +77,10 @@ In this exact order:
 the user (rungs 3–4 — i.e., no CLAUDE.md declaration existed), offer once to
 record the chosen destination as a `Followups:` line in the project
 CLAUDE.md so future sessions resolve at rung 1. Only on explicit acceptance;
-declining never re-offers in the same session.
+declining never re-offers in the same session. If the user also supplied
+Linear team/project at ask-time, an accepted offer records the
+`Linear: team=X project=Y` line alongside the `Followups:` line, so neither
+is re-asked.
 
 ## 4. Failure handling
 
