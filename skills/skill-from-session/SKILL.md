@@ -91,4 +91,4 @@ the generated skill — the session itself is the evidence the workflow works.
 
 REQUIRED BACKGROUND for editing this skill: superpowers:writing-skills (TDD-for-skills).
 
-The canonical pressure scenario is `tests/skill-from-session-baseline-pressure-scenario.md`; the baseline record is `tests/skill-from-session-baseline-observations.md`; the with-skill verification is `tests/skill-from-session-with-skill-observations.md`.
+The canonical pressure scenario is `tests/skill-from-session-baseline-pressure-scenario.md`; the baseline record is `tests/skill-from-session-baseline-observations.md`; the with-skill verification is `tests/skill-from-session-with-skill-observations.md`. The edge-branch scenarios are `tests/skill-from-session-edge-pressure-scenarios.md`; their verification record is `tests/skill-from-session-edge-observations.md`.
