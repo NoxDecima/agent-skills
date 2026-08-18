@@ -56,4 +56,5 @@ To add a new personal skill:
 
 1. Study `skills/followup-tracking/SKILL.md` and the references it cites.
 2. Follow the TDD discipline: write a baseline pressure scenario, run it with a subagent **without** the skill, document what happened. Only then write the minimal skill.
-3. Symlink the new skill directory into `~/.claude/skills/`.
+3. Rerun the scenario **with** the skill loaded and record that the baseline failures are closed before calling it done.
+4. Symlink the new skill directory into `~/.claude/skills/`.
