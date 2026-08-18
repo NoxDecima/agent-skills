@@ -26,7 +26,8 @@ The user's final message follows. Respond as you would in the live session.
 Constraints for this exercise:
 - Do NOT touch the real filesystem at all or call any real MCP tools. Show
   every would-be file write — including any under `~` — and every would-be
-  tool call with its arguments. The world-state section below is ground
+  tool call with its arguments; after showing a would-be tool call, stop
+  and wait for its result. The world-state section below is ground
   truth for every file lookup you would make.
 - The Session state section below is ground truth for TaskList; do not call
   real Task tools — narrate task-state changes instead
@@ -95,7 +96,7 @@ the served content.
 - `~/work/meteolog/config.py` around the TODO (served ground truth):
 
   ```python
-  # lines 84-92
+  # lines 85-93
   def resolve_tz(name: str) -> str:
       if name in TZ_ALIASES:
           return TZ_ALIASES[name]
@@ -107,6 +108,7 @@ the served content.
   LEGACY_TZ = os.environ.get("METEOLOG_LEGACY_TZ", "")
   ```
 
+- `LEGACY_TZ` / `METEOLOG_LEGACY_TZ` appear nowhere else in the repo.
 - There is no `FUTURE.md` anywhere in `~/work/meteolog`.
 - No followup destination has been discussed earlier in this chat.
 
