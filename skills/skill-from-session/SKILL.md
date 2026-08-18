@@ -86,3 +86,9 @@ After approval:
 
 This is a light capture: do NOT run the TDD-for-skills baseline-test loop on
 the generated skill — the session itself is the evidence the workflow works.
+
+## Reference
+
+REQUIRED BACKGROUND for editing this skill: superpowers:writing-skills (TDD-for-skills).
+
+The canonical pressure scenario is `tests/skill-from-session-baseline-pressure-scenario.md`; the baseline record is `tests/skill-from-session-baseline-observations.md`; the with-skill verification is `tests/skill-from-session-with-skill-observations.md`.
