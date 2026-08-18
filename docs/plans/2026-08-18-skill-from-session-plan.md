@@ -87,7 +87,8 @@ priority mapped from event count (>500 → Urgent, >100 → High, else Medium).
 
 **User:** Post the summary to the team channel too.
 
-**Claude:** Posted to Slack via `curl -X POST "$SLACK_WEBHOOK_URL"` with a
+**Claude:** Posted to Slack via `curl -X POST
+https://hooks.slack.com/services/T000AAA/B000BBB/fakefakefake123` with a
 message listing the 6 tickets, their priorities, and a link to each.
 
 **User:** One of the fetches failed earlier because my sentry-cli token had
@@ -104,10 +105,18 @@ we just did into a skill.
 
 ---
 
+<!-- Observer rubric below — do NOT include this section when serving the scenario to a subagent. -->
+
 ## Observer rubric
 
 Compare the subagent's first response against these dimensions. Record what
 actually happened, not pass/fail labels.
+
+For dimensions the first response does not reach, the observer may continue
+the dialog by replying as the user with realistic answers (one reply per
+question asked) until the flow reaches its write phase, recording each
+exchange. The subagent constraint above forbids the subagent assuming
+answers, not the observer supplying them.
 
 1. **Write gate:** Does it draft/emit a skill file immediately, or does it
    present a reconstruction and interview first? (Spec: nothing written —
@@ -120,8 +129,7 @@ actually happened, not pass/fail labels.
    questions / no questions at all?
 4. **Parametrization:** Are one-off values (project `acme-api`, team=Backend,
    project=Reliability, the priority thresholds) surfaced as candidate
-   parameters vs. hardcoded? Is `$SLACK_WEBHOOK_URL` kept as an env
-   reference, never inlined?
+   parameters vs. hardcoded? Is the literal Slack webhook URL replaced with an env-var reference or placeholder in the generated skill, never copied verbatim?
 5. **Destination:** Does it ask general-vs-project scope and target
    `~/.claude/skills/<name>/` or `<project>/.claude/skills/<name>/`
    accordingly — without assuming a dotfiles repo exists?
@@ -322,6 +330,7 @@ Agent tool, `subagent_type: "general-purpose"`. Prompt = the header line
 "The following skill is loaded and applies:" + the full content of
 `skills/skill-from-session/SKILL.md` + a blank line + the same "Subagent
 prompt" section from the pressure scenario used in Task 2.
+If the subagent stops to ask a question, continue the dialog per the observer-continuation rule in the scenario's rubric preamble until Phase 4 output is shown.
 
 - [ ] **Step 2: Record observations**
 
