@@ -74,7 +74,7 @@ In this exact order:
 4. **Ask** — prompt with no defaults.
 
 **Record-the-choice offer:** whenever the destination was resolved by asking
-the user (rungs 3–4 — i.e., no CLAUDE.md declaration existed), offer once to
+the user (rungs 3–4 — no declaration and no chat precedent), offer once to
 record the chosen destination as a `Followups:` line in the project
 CLAUDE.md so future sessions resolve at rung 1. Only on explicit acceptance;
 declining never re-offers in the same session. If the user also supplied

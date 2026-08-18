@@ -43,7 +43,7 @@ readlink -f ~/.claude/skills/project-catchup
 readlink -f ~/.claude/skills/skill-from-session
 ```
 
-To activate additional personal skills landed in this repo, repeat step 3 with the new skill's directory. Smoke-test in a fresh Claude Code session — `GLOBAL.md`'s content should be in context, the project `CLAUDE.md` should also be in context when the cwd is this repo, and any installed personal skill should be listed under available skills.
+To activate additional personal skills landed in this repo, repeat step 2 with the new skill's directory. Smoke-test in a fresh Claude Code session — `GLOBAL.md`'s content should be in context, the project `CLAUDE.md` should also be in context when the cwd is this repo, and any installed personal skill should be listed under available skills.
 
 The full task-by-task install procedure (with backup logic, verification, and a fresh-session smoke test) is in `docs/plans/2026-05-15-personal-claude-customization-v1-plan.md`.
 
