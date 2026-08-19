@@ -304,7 +304,7 @@ recording, DECLINE; answer anything else realistically.
 ```bash
 cd /home/nox/Documents/Projects/Nox/claude-config
 git add tests/followup-tracking-v2-pressure-scenario.md
-git commit -m "Add followup-tracking v2 pressure scenario (three variants)"
+git commit -m "Add followup-tracking v2 pressure scenario (four variants)"
 ```
 
 ---
@@ -586,7 +586,7 @@ New:
 Then renumber the remaining setup comments (`# 3.` → `# 2.`, `# 4.` → `# 3.`)
 and confirm no other `claude-followups` references remain anywhere in the
 repo outside `tests/` history and `docs/` history:
-`grep -rn "claude-followups" --include='*.md' . | grep -v '^./tests/' | grep -v '^./docs/'`
+`grep -rn "claude-followups" --include='*.md' --exclude-dir=tests --exclude-dir=docs .`
 Expected: no hits.
 
 - [ ] **Step 3: Commit**
