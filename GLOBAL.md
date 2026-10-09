@@ -8,11 +8,11 @@ ALWAYS invoke `superpowers:using-superpowers` when starting any non-trivial task
 
 Capture deferrable items via the `followup-tracking` skill. The active list lives in TaskList (filter by `metadata.kind = "followup"`). On task completion, run the triage flow.
 
-Persistence destinations: FUTURE.md, Linear, or both. Destination resolution (used by `followup-tracking`):
+Persistence destinations: FUTURE.md, Linear, both, or the workplan Inbox of a project ledger. Destination resolution (used by `followup-tracking`):
 
-1. If this project's CLAUDE.md declares `Followups: linear | future | both` (optional `future=<path>`), use it without prompting. A CLAUDE.md with only a `Linear: team=X project=Y` line resolves to `linear`; that line also supplies the Linear coordinates.
+1. If this project's CLAUDE.md declares `Followups: linear | future | both | workplan` (optional `future=<path>`), use it without prompting. A CLAUDE.md with only a `Linear: team=X project=Y` line resolves to `linear`; that line also supplies the Linear coordinates.
 2. Else if a destination was used earlier in this chat, suggest it as a default in a confirmation prompt.
-3. Else if a `FUTURE.md` exists at the project root, suggest it as the default.
+3. Else if a `workplan.md` with an `## Inbox` section exists (project ledger), suggest `workplan`; else if a `FUTURE.md` exists at the project root, suggest it as the default.
 4. Else prompt the user with no defaults.
 
 If the destination was resolved by asking (rungs 3–4), offer once to record it as a `Followups:` line in the project CLAUDE.md.
