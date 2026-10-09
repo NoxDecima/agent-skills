@@ -17,4 +17,8 @@ Persistence destinations: FUTURE.md, Linear, or both. Destination resolution (us
 
 If the destination was resolved by asking (rungs 3–4), offer once to record it as a `Followups:` line in the project CLAUDE.md.
 
+## Debugging
+
+During `superpowers:systematic-debugging`, do not enter Phase 3 (hypothesis testing) without a reliable reproduction of the bug. If the bug cannot be reproduced, keep gathering evidence — do not guess.
+
 <!-- Reserved for additional small preferences as they arise. Keep this file under 200 lines total. -->
