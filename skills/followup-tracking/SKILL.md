@@ -14,7 +14,7 @@ Capture deferrable items the moment you notice them, surface them at task comple
 **Capture is automatic. Persistence is explicit.**
 
 - **Capture** = a `TaskCreate` call. Naming an item in a summary, calling it "untouched," or noting it parenthetically is **not** capture.
-- **Persistence** (Linear, FUTURE.md) happens only on explicit user `Keep` during triage.
+- **Persistence** (Linear, FUTURE.md, a project-ledger workplan Inbox) happens only on explicit user `Keep` during triage.
 
 **Scope-compliance and capture are independent axes.** "Do not modify X" is a *modification* boundary. It is **not** a gag order. Items you may not edit, you must still record.
 
@@ -92,13 +92,13 @@ If zero followups were captured, skip this phase silently. Do not fabricate item
 
 ### 3. Persist (only on Keep)
 
-Destinations: `linear`, `future` (a FUTURE.md file), or `both`.
+Destinations: `linear`, `future` (a FUTURE.md file), `both` (Linear and FUTURE.md), or `workplan` (the `## Inbox` of a project-ledger workplan).
 
 Destination resolution, in this exact order:
 
-1. If your loaded project memory (the harness's project-`CLAUDE.md`, already in your context) contains a `Followups: linear | future | both` line (optional path override `future=<path>`), use it without prompting. Backward compatible: a project memory with only a `Linear: team=X project=Y` line resolves to `linear`. Do not go searching the filesystem for memory/declaration files — only the project memory already present in context counts (rung 3's FUTURE.md existence check is the one permitted lookup).
+1. If your loaded project memory (the harness's project-`CLAUDE.md`, already in your context) contains a `Followups: linear | future | both | workplan` line (optional path override `future=<path>`), use it without prompting. Backward compatible: a project memory with only a `Linear: team=X project=Y` line resolves to `linear`. Do not go searching the filesystem for memory/declaration files — only the project memory already present in context counts (rung 3's workplan and FUTURE.md existence checks are the only permitted lookups).
 2. Else, if a destination was used earlier in **this chat**, suggest it as a default in a confirmation prompt. The suggestion is a default, never a silent reuse.
-3. Else, if a `FUTURE.md` exists at the project root, suggest it as the default in the clarification question — never silently use it.
+3. Else, if a `workplan.md` with an `## Inbox` section exists at the project root (or at the path the project memory's `## Project ledger` Owns table gives for `§ Inbox`), suggest `workplan` as the default; else, if a `FUTURE.md` exists at the project root, suggest it as the default. Either way in the clarification question — never silently use it.
 4. Else, prompt the user with no defaults.
 
 **Record the choice:** when the destination was resolved by asking (rungs 3–4), offer once to record it as a `Followups:` line in the project CLAUDE.md so future sessions resolve at rung 1. Apply only on explicit acceptance; if declined, do not re-offer this session. If the user also supplied Linear team/project at ask-time, the accepted offer records the `Linear: team=X project=Y` line alongside the `Followups:` line, so neither is re-asked.
@@ -168,10 +168,26 @@ Create the issue. Capture the returned Linear issue ID for the FUTURE.md `Linear
 - Ticking `- [x]` is the user's business; the skill does not manage entry
   lifecycle.
 
+**Workplan Inbox** (when the destination is `workplan`)
+
+- Path: the file of the `§ Inbox` row in the project memory's `## Project ledger`
+  Owns table; default `workplan.md` at the project root.
+- Append at the end of its `## Inbox` section, one item per line, no id:
+
+  ```markdown
+  - YYYY-MM-DD · followup (<surfaced-during>) · <subject>
+    <origin file:line, when there is one>
+  ```
+
+- Never give the item a `W-` id or place it in Now, Next or Backlog: triage is
+  the project-ledger audit's job.
+- A workplan without an `## Inbox` section is a write failure (below).
+
 ## Failure handling
 
 - **Linear MCP unavailable or errors.** Surface the error to the user verbatim and offer to write the item to FUTURE.md instead, so the item is not lost. Do not silently swallow.
 - **FUTURE.md write fails.** Surface the error to the user verbatim.
+- **Workplan write fails or has no `## Inbox` section.** Surface the error to the user verbatim and offer FUTURE.md instead, so the item is not lost.
 - In every failure case the item stays in TaskList until successfully persisted or explicitly dropped. TaskList is the only in-flight safety net; swallowing a persistence failure is a violation.
 - **No followups captured.** Triage phase is skipped silently.
 
